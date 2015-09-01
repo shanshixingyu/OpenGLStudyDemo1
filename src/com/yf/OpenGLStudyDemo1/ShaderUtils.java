@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- *
  * Created by hwz on 2015-09-01.
  */
 public class ShaderUtils {
@@ -18,7 +17,7 @@ public class ShaderUtils {
 
     public static String readSourceFromAssetsDirectory(String fileName, Resources resources) {
         String result = null;
-        if (fileName != null || resources == null)
+        if (fileName == null || resources == null)
             return result;
 
         InputStream inputStream = null;
@@ -64,7 +63,7 @@ public class ShaderUtils {
         int vertexShader = loadShader(GLES20.GL_VERTEX_SHADER, vertexSource);
         if (vertexShader == 0)
             return 0;
-        int fragmentShader = loadShader(GLES20.GL_FRAGMENT_SHADER, vertexSource);
+        int fragmentShader = loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentSource);
         if (fragmentShader == 0)
             return 0;
 
@@ -90,8 +89,9 @@ public class ShaderUtils {
     }
 
     /**
-     * ¼ÓÔØ×ÅÉ«Æ÷
-     * @param shaderType ×ÅÉ«Æ÷ÀàĞÍ£ºGLES20.GL_VERTEX_SHADER / GLES20.GL_FRAGMENT_SHADER
+     * åŠ è½½ç€è‰²å™¨
+     *
+     * @param shaderType ç€è‰²å™¨ç±»å‹ï¼šGLES20.GL_VERTEX_SHADER / GLES20.GL_FRAGMENT_SHADER
      * @param source
      * @return
      */
@@ -103,7 +103,7 @@ public class ShaderUtils {
             int[] compileResult = new int[1];
             GLES20.glGetShaderiv(shader, GLES20.GL_COMPILE_STATUS, compileResult, 0);
             if (compileResult[0] == 0) {
-                Log.e(TAG, "Shader±àÒëÊ§°Ü");
+                Log.e(TAG, "ShaderåŠ è½½å¤±è´¥ " + shaderType);
                 Log.e(TAG, GLES20.glGetShaderInfoLog(shader));
                 GLES20.glDeleteShader(shader);
                 shader = 0;
@@ -114,7 +114,7 @@ public class ShaderUtils {
     }
 
     /**
-     * ¼ì²éÃ¿Ò»²½²Ù×÷ÊÇ·ñÓĞ´íÎóµÄ·½·¨ 
+     * æ£€æŸ¥æ¯ä¸€æ­¥æ“ä½œæ˜¯å¦æœ‰é”™è¯¯çš„æ–¹æ³•
      */
     public static void checkGlError(String op) {
         int error;

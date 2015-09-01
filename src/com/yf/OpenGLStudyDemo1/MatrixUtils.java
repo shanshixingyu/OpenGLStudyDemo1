@@ -2,6 +2,8 @@ package com.yf.OpenGLStudyDemo1;
 
 import android.opengl.Matrix;
 
+import java.util.Arrays;
+
 /**
  * Created by Administrator on 8/31 0031.
  */
@@ -10,8 +12,11 @@ public class MatrixUtils {
     private static float[] mOrthoMatrixArray = new float[16];
     private static float[] mCameraMatrixArray = new float[16];
 
+    private static float[] mMVPMatrixArray = new float[16];
+
     /**
-     * ÉèÖÃÎªÕı½»Í¶Ó°
+     * è®¾ç½®ä¸ºæ­£äº¤æŠ•å½±
+     *
      * @param left
      * @param right
      * @param bottom
@@ -25,19 +30,34 @@ public class MatrixUtils {
     }
 
     /**
-     * ÉèÖÃÉãÏñ»úµÄ°Ú·Å
-     * @param cx ÉãÏñ»úµÄx×ø±ê
-     * @param cy ÉãÏñ»úµÄy×ø±ê
-     * @param cz ÉãÏñ»úµÄz×ø±ê
-     * @param tx ÉãÏñ»úµÄÄ¿±êµãx
-     * @param ty ÉãÏñ»úµÄÄ¿±êµãy
-     * @param tz ÉãÏñ»úµÄÄ¿±êµãz
-     * @param upx ÉãÏñ»úUPÏòÁ¿x·ÖÁ¿
-     * @param upy ÉãÏñ»úUPÏòÁ¿y·ÖÁ¿
-     * @param upz ÉãÏñ»úUP·ÖÁ¿z·ÖÁ¿
+     * è®¾ç½®æ‘„åƒå¤´çš„æ‘†æ”¾
+     *
+     * @param cx  æ‘„åƒå¤´åæ ‡çš„x
+     * @param cy  æ‘„åƒå¤´åæ ‡çš„y
+     * @param cz  æ‘„åƒå¤´åæ ‡çš„z
+     * @param tx  æ‘„åƒå¤´æœå‘çš„ç›®æ ‡ç‚¹åæ ‡çš„x
+     * @param ty  æ‘„åƒå¤´æœå‘çš„ç›®æ ‡ç‚¹åæ ‡çš„y
+     * @param tz  æ‘„åƒå¤´æœå‘çš„ç›®æ ‡ç‚¹åæ ‡çš„z
+     * @param upx æ‘„åƒå¤´upå‘é‡çš„xåˆ†é‡
+     * @param upy æ‘„åƒå¤´upå‘é‡çš„yåˆ†é‡
+     * @param upz æ‘„åƒå¤´upå‘é‡çš„zåˆ†é‡
      */
     public static void setCamera(float cx, float cy, float cz, float tx, float ty, float tz, float upx, float upy, float upz) {
         Matrix.setLookAtM(mCameraMatrixArray, 0, cx, cy, cz, tx, ty, tz, upx, upy, upz);
     }
+
+    public static float[] getFinalMatrixArray(float[] spec) {
+        if (mMVPMatrixArray == null || mMVPMatrixArray.length != 16) {
+            mMVPMatrixArray = new float[16];
+        } else {
+            Arrays.fill(mMVPMatrixArray, 0);
+        }
+
+        Matrix.multiplyMM(mMVPMatrixArray, 0, mCameraMatrixArray, 0, spec, 0);
+        Matrix.multiplyMM(mMVPMatrixArray, 0, mOrthoMatrixArray, 0, mMVPMatrixArray, 0);
+
+        return mMVPMatrixArray;
+    }
+
 
 }

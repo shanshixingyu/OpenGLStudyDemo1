@@ -2,6 +2,7 @@ package com.yf.OpenGLStudyDemo1;
 
 import android.opengl.GLES20;
 import android.opengl.Matrix;
+import android.util.Log;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -13,6 +14,8 @@ import java.util.List;
  * Created by Administrator on 8/31 0031.
  */
 public class SixStart {
+
+    private static final String TAG = SixStart.class.getName();
 
     private static final int ONE_ANGLE = 60;
     private static final int HALF_ANGLE = 30;
@@ -29,8 +32,8 @@ public class SixStart {
 
     private int mProgram;
 
-    private float yAngle = 0;// ÈÆyÖáÐý×ªµÄ½Ç¶È
-    private float xAngle = 0;// ÈÆzÖáÐý×ªµÄ½Ç¶È
+    private float yAngle = 0; //ç»•yè½´æ—‹è½¬çš„è§’åº¦
+    private float xAngle = 0; //ç»•xè½´æ—‹è½¬çš„è§’åº¦
 
     public SixStart(float bigRadius, float smallRadius, OpenGLSurfaceView openGLSurfaceView) {
         initVertex(bigRadius, smallRadius);
@@ -41,9 +44,8 @@ public class SixStart {
 
         List<Float> vertexList = new ArrayList<Float>();
         for (float angle = 0; angle < 360; angle += ONE_ANGLE) {
-            // Ã¿¸ö60¶ÈÓÐ6=3*2¸öµã,Ò²¾Í18=6*3¸öÖµ
 
-            // µÚÒ»¸öÈý½ÇÐÎ
+            //ç¬¬ä¸€ä¸ªä¸‰è§’åž‹çš„ä¸‰ä¸ªé¡¶ç‚¹
             vertexList.add(0f);
             vertexList.add(0f);
             vertexList.add(0f);
@@ -56,71 +58,73 @@ public class SixStart {
             vertexList.add((float) (smallRadius * Math.sin(Math.toRadians(angle + HALF_ANGLE))));
             vertexList.add(0f);
 
-            // µÚ¶þ¸öÈý½ÇÐÎ
+            // ç¬¬äºŒä¸ªä¸‰è§’å½¢çš„ä¸‰ä¸ªé¡¶ç‚¹
             vertexList.add(0f);
             vertexList.add(0f);
             vertexList.add(0f);
 
-            vertexList.add((float) (bigRadius * Math.cos(Math.toRadians(angle + HALF_ANGLE))));
-            vertexList.add((float) (bigRadius * Math.sin(Math.toRadians(angle + HALF_ANGLE))));
+            vertexList.add((float) (smallRadius * Math.cos(Math.toRadians(angle + HALF_ANGLE))));
+            vertexList.add((float) (smallRadius * Math.sin(Math.toRadians(angle + HALF_ANGLE))));
             vertexList.add(0f);
 
-            vertexList.add((float) (smallRadius * Math.cos(Math.toRadians(angle + ONE_ANGLE))));
-            vertexList.add((float) (smallRadius * Math.sin(Math.toRadians(angle + ONE_ANGLE))));
+            vertexList.add((float) (bigRadius * Math.cos(Math.toRadians(angle + ONE_ANGLE))));
+            vertexList.add((float) (bigRadius * Math.sin(Math.toRadians(angle + ONE_ANGLE))));
             vertexList.add(0f);
         }
 
+//        Log.i(TAG, "èŽ·å¾—çš„é¡¶ç‚¹ä¿¡æ¯ï¼š" + vertexList);
+
         mVertexCount = vertexList.size() / 3;
+//        Log.i(TAG, "èŽ·å¾—çš„é¡¶ç‚¹ä¸ªæ•°ï¼š" + mVertexCount);
         float[] mVertexArray = new float[vertexList.size()];
         for (int i = 0; i < vertexList.size(); i++) {
             mVertexArray[i] = vertexList.get(i);
         }
 
-        ByteBuffer vertextByteBuffer = ByteBuffer.allocateDirect(vertexList.size() * 4);
-        vertextByteBuffer.order(ByteOrder.nativeOrder());
-        mVertexFloatBuffer = vertextByteBuffer.asFloatBuffer();
+        ByteBuffer vertexByteBuffer = ByteBuffer.allocateDirect(vertexList.size() * 4);
+        vertexByteBuffer.order(ByteOrder.nativeOrder());
+        mVertexFloatBuffer = vertexByteBuffer.asFloatBuffer();
         mVertexFloatBuffer.put(mVertexArray);
         mVertexFloatBuffer.position(0);
 
         float[] mColorArray = new float[mVertexCount * 4];
         for (int i = 0; i < mVertexCount; i++) {
-            // Èý¸öµãÒ»×é
-            if (i % 3 == 0) {// ÖÐ¼ä°×É«
+            if (i % 3 == 0) {// å…­è§’æ˜Ÿä¸­é—´ç™½è‰²
                 mColorArray[i * 4] = 1f;
                 mColorArray[i * 4 + 1] = 1f;
                 mColorArray[i * 4 + 2] = 1f;
                 mColorArray[i * 4 + 3] = 1f;
-            } else {// ÅÔ±ßµ­À¶É«
+            } else {// å…­è§’æ˜Ÿå‘¨è¾¹æ·¡è“è‰²
                 mColorArray[i * 4] = 0.45f;
                 mColorArray[i * 4 + 1] = 0.75f;
                 mColorArray[i * 4 + 2] = 0.75f;
-                mColorArray[i * 4 + 3] = 0;
+                mColorArray[i * 4 + 3] = 1f;
             }
         }
         ByteBuffer colorByteBuffer = ByteBuffer.allocateDirect(mColorArray.length * 4);
         colorByteBuffer.order(ByteOrder.nativeOrder());
         mColorFloatBuffer = colorByteBuffer.asFloatBuffer();
         mColorFloatBuffer.put(mColorArray);
-        mVertexFloatBuffer.position(0);
+        mColorFloatBuffer.position(0);
 
     }
 
     private void initShader(OpenGLSurfaceView openGLSurfaceView) {
-        String vertexSharderSource =
-            ShaderUtils.readSourceFromAssetsDirectory("vertex.sh", openGLSurfaceView.getResources());
-        if (vertexSharderSource == null) {
-            throw new NullPointerException("¶ÁÈ¡¶¥µã×ÅÉ«Æ÷´úÂëÊ§°Ü");
+        String vertexShaderSource =
+                ShaderUtils.readSourceFromAssetsDirectory("vertex.sh", openGLSurfaceView.getResources());
+        if (vertexShaderSource == null) {
+            throw new NullPointerException("è¯»å–é¡¶ç‚¹ç€è‰²å™¨æºç å¤±è´¥");
         }
 
-        String fragmentSharderSource =
-            ShaderUtils.readSourceFromAssetsDirectory("fragment.sh", openGLSurfaceView.getResources());
-        if (fragmentSharderSource == null) {
-            throw new NullPointerException("¶ÁÈ¡Æ¬Ôª×ÅÉ«Æ÷´úÂëÊ§°Ü");
+        String fragmentShaderSource =
+                ShaderUtils.readSourceFromAssetsDirectory("fragment.sh", openGLSurfaceView.getResources());
+        if (fragmentShaderSource == null) {
+            throw new NullPointerException("è¯»å–ç‰‡å…ƒç€è‰²å™¨æºç å¤±è´¥");
         }
 
-        mProgram = ShaderUtils.createProgram(vertexSharderSource, fragmentSharderSource);
+        mProgram = ShaderUtils.createProgram(vertexShaderSource, fragmentShaderSource);
         if (mProgram == 0) {
-            throw new IllegalStateException("´´½¨³ÌÐòÊ§°Ü");
+            throw new IllegalStateException("åˆ›å»ºç¨‹åºå¤±è´¥");
         }
 
         mMVPMatrixHandle = GLES20.glGetUniformLocation(mProgram, "uMVPMatrix");
@@ -136,5 +140,13 @@ public class SixStart {
         Matrix.rotateM(mMatrixArray, 0, yAngle, 0, 1, 0);
         Matrix.rotateM(mMatrixArray, 0, xAngle, 1, 0, 0);
 
+        GLES20.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, MatrixUtils.getFinalMatrixArray(mMatrixArray), 0);
+        GLES20.glVertexAttribPointer(mPositionHandle, 3, GLES20.GL_FLOAT, false, 3 * 4, mVertexFloatBuffer);
+        GLES20.glVertexAttribPointer(mColorHandle, 4, GLES20.GL_FLOAT, false, 4 * 4, mColorFloatBuffer);
+
+        GLES20.glEnableVertexAttribArray(mPositionHandle);
+        GLES20.glEnableVertexAttribArray(mColorHandle);
+
+        GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, mVertexCount);
     }
 }

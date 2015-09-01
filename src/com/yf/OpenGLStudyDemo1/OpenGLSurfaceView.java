@@ -3,7 +3,6 @@ package com.yf.OpenGLStudyDemo1;
 import android.content.Context;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
-import android.opengl.Matrix;
 import android.util.AttributeSet;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -22,9 +21,7 @@ public class OpenGLSurfaceView extends GLSurfaceView {
 
     public OpenGLSurfaceView(Context context, AttributeSet attrs) {
         super(context, attrs);
-
         setEGLContextClientVersion(2);
-
         mOpenGLRender = new OpenGLRender();
         setRenderer(mOpenGLRender);
         setRenderMode(RENDERMODE_CONTINUOUSLY);
@@ -36,8 +33,9 @@ public class OpenGLSurfaceView extends GLSurfaceView {
 
         @Override
         public void onSurfaceCreated(GL10 gl10, EGLConfig eglConfig) {
-            GLES20.glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
-            mSixStart = new SixStart(20f, 10f, OpenGLSurfaceView.this);
+            GLES20.glClearColor(1f, 1f, 1f, 1f);
+//            GLES20.glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+            mSixStart = new SixStart(0.5f, 0.2f, OpenGLSurfaceView.this);
             GLES20.glEnable(GLES20.GL_DEPTH_TEST);
         }
 
@@ -45,7 +43,7 @@ public class OpenGLSurfaceView extends GLSurfaceView {
         public void onSurfaceChanged(GL10 gl, int width, int height) {
             gl.glViewport(0, 0, width, height);
             float ratio = (float) width / height;
-            MatrixUtils.setOrthoM(-ratio, ratio, 1, 1, 1, 5);
+            MatrixUtils.setOrthoM(-ratio, ratio, -1, 1, 1, 10);
             MatrixUtils.setCamera(0, 0, 3, 0, 0, 0, 0, 1, 0);
         }
 
