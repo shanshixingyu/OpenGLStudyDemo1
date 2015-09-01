@@ -14,9 +14,7 @@ import javax.microedition.khronos.opengles.GL10;
  */
 public class OpenGLSurfaceView extends GLSurfaceView {
 
-
     private OpenGLRender mOpenGLRender;
-
 
     public OpenGLSurfaceView(Context context) {
         this(context, null);
@@ -32,16 +30,14 @@ public class OpenGLSurfaceView extends GLSurfaceView {
         setRenderMode(RENDERMODE_CONTINUOUSLY);
     }
 
-
     private class OpenGLRender implements GLSurfaceView.Renderer {
 
         private SixStart mSixStart;
 
-
         @Override
         public void onSurfaceCreated(GL10 gl10, EGLConfig eglConfig) {
             GLES20.glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
-            mSixStart = new SixStart();
+            mSixStart = new SixStart(20f, 10f, OpenGLSurfaceView.this);
             GLES20.glEnable(GLES20.GL_DEPTH_TEST);
         }
 
@@ -50,11 +46,7 @@ public class OpenGLSurfaceView extends GLSurfaceView {
             gl.glViewport(0, 0, width, height);
             float ratio = (float) width / height;
             MatrixUtils.setOrthoM(-ratio, ratio, 1, 1, 1, 5);
-            MatrixUtils.setCamera(
-                    0, 0, 3,
-                    0, 0, 0,
-                    0, 1, 0
-            );
+            MatrixUtils.setCamera(0, 0, 3, 0, 0, 0, 0, 1, 0);
         }
 
         @Override
@@ -65,6 +57,5 @@ public class OpenGLSurfaceView extends GLSurfaceView {
             }
         }
     }
-
 
 }
