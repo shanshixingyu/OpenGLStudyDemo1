@@ -26,7 +26,20 @@ public class MatrixUtils {
      */
     public static void setOrthoM(float left, float right, float bottom, float top, float near, float far) {
         Matrix.orthoM(mOrthoMatrixArray, 0, left, right, bottom, top, near, far);
+    }
 
+    /**
+     * 设置为透视投影
+     *
+     * @param left
+     * @param right
+     * @param bottom
+     * @param top
+     * @param near
+     * @param far
+     */
+    public static void setFrustumM(float left, float right, float bottom, float top, float near, float far) {
+        Matrix.frustumM(mOrthoMatrixArray, 0, left, right, bottom, top, near, far);
     }
 
     /**

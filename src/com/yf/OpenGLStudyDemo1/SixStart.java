@@ -149,4 +149,20 @@ public class SixStart {
 
         GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, mVertexCount);
     }
+
+    public void setXAngle(float angle) {
+        this.xAngle = angle;
+    }
+
+    public float getXAngle() {
+        return this.xAngle;
+    }
+
+    public void setYAngle(float angle) {
+        this.yAngle = angle;
+    }
+
+    public float getYAngle() {
+        return this.yAngle;
+    }
 }
